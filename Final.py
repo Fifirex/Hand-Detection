@@ -13,7 +13,8 @@ starttime = time.time()
 ## FPS counter
 last_frame_time, current_frame_time = 0, 0
 
-i = 1       ## For indexing output ##
+# iteration number
+i = 1      
 
 #height and width of a frame
 h=0 
