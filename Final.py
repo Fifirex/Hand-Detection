@@ -15,6 +15,10 @@ last_frame_time, current_frame_time = 0, 0
 
 i = 1       ## For indexing output ##
 
+#height and width of a frame
+h=0 
+w=0
+
 # For webcam input:
 cap = cv2.VideoCapture(0)
 with mp_hands.Hands(
@@ -23,6 +27,12 @@ with mp_hands.Hands(
   
   while cap.isOpened():
     success, image = cap.read()
+
+    #init for size of the frame
+    if i==1:
+      h = image.shape[0]
+      w = image.shape[1]
+    
     if not success:
       print("Ignoring empty camera frame.")
       # If loading a video, use 'break' instead of 'continue'.
@@ -61,10 +71,12 @@ with mp_hands.Hands(
       i += 1
             
     cv2.putText(image, fps, (20, 120), font, 3, (10, 155, 0), 3, cv2.LINE_AA)    ## FPS counter
-    cv2.imshow('MediaPipe Hands', image)
+    cv2.line(image, (2 * w // 5, 0), (2 * w // 5, h), (0,0,0), 5)
+    cv2.line(image, (3 * w // 5, 0), (3 * w // 5, h), (0,0,0), 5)
+    cv2.imshow('Hands', image)
     
     endtime = time.time()     ## runtime counter ##
-    print(endtime-starttime)
+    # print(endtime-starttime)
 
     if cv2.waitKey(2) & 0xFF == 27:
       break
