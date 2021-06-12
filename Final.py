@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import time
+import numpy as np
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -16,9 +17,8 @@ last_frame_time, current_frame_time = 0, 0
 # iteration number
 i = 1      
 
-#height and width of a frame
-h=0 
-w=0
+# Main np array layout ([left_check, right_check], [closed_check, NULL])
+arr = np.array([[0, 0], [0, 0]]) 
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
@@ -29,11 +29,13 @@ with mp_hands.Hands(
   while cap.isOpened():
     success, image = cap.read()
 
-    #init for size of the frame
-    if i==1:
-      h = image.shape[0]
-      w = image.shape[1]
-    
+    # init for size of the frame
+    h, w, r = image.shape
+
+    # array debug
+    print (arr)
+    # print (3*w//5)
+
     if not success:
       print("Ignoring empty camera frame.")
       # If loading a video, use 'break' instead of 'continue'.
@@ -62,11 +64,17 @@ with mp_hands.Hands(
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
         for id, lms in enumerate(hand_landmarks.landmark):
-          if(id == 5 or id == 6 or id == 7 or id == 8):
-            ##### Not printing out lover hand to reduce the clutter ############
-
-            ######### Might split for each finger and then combine finally if too much cluttering ###########
-            sourcefile.write(f"\n{i}:\n{id}:\n{lms}\n\n")
+          if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 1] == 0)):
+            arr[0, 0] = 0
+            arr[0, 1] = 1
+          elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] == 0)):
+            arr[0, 1] = 0
+            arr[0, 0] = 1
+          elif ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5)):
+            arr[0, 1] = 0
+            arr[0, 0] = 0
+          # if(id==4 or id==20):
+          #   sourcefile.write(f"\n{i}:\n{id}:\n{lms.x*w}\n\n")
 
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       i += 1
