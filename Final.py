@@ -15,13 +15,14 @@ last_frame_time, current_frame_time = 0, 0
 # Master counter
 i = 1      
 
-# Main np array layout ([left_check, right_check], [closed_check, NULL])
+# Main np array layout ([lateral_state, NULL], [closed_check, NULL])
+# Lateral_state: right (1), centre (0), left (-1)
 arr = np.array([[0, 0], [0, 0]]) 
 
 # Config Distance
+CONFIG_CYCLE = 50
 dist = 0
 ctr = 0
-CONFIG_CYCLE = 50
 low = 0
 high = 0
 
@@ -29,7 +30,8 @@ high = 0
 cap = cv2.VideoCapture(0)
 with mp_hands.Hands(
     min_detection_confidence = 0.5,
-    min_tracking_confidence = 0.5) as hands:
+    max_num_hands = 1,
+    min_tracking_confidence = 0.6) as hands:
   
   while cap.isOpened():
     success, image = cap.read()
@@ -39,6 +41,21 @@ with mp_hands.Hands(
 
     # DEBUG
     print (arr)
+    print("POSITION : ")
+    if ( arr[0,0] == 1 ):
+      print("RIGHT")
+    elif ( arr[0,0]== -1 ):
+      print("LEFT")
+    elif ( arr[0,0] == 0 ):
+      print("CENTRE")
+    print("CLAWED : ")
+    if ( ctr >= CONFIG_CYCLE ):
+      if ( arr[0,1] == 1):
+        print("YES")
+      else:
+        print("NO")
+    else:
+      print("IN CONFIG")
     # print (3*w//5)
     # print (ctr)
     # print (dist)
@@ -73,14 +90,14 @@ with mp_hands.Hands(
         for id, lms in enumerate(hand_landmarks.landmark):
 
           # LATERAL MOVEMENT
-          if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 1] == 0)):
-            arr[0, 0] = 0
-            arr[0, 1] = 1
-          elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] == 0)):
-            arr[0, 1] = 0
+          # right
+          if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
             arr[0, 0] = 1
-          elif ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5)):
-            arr[0, 1] = 0
+          #left
+          elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
+            arr[0, 0] = -1
+          #centre
+          elif ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0, 0] != 0)):
             arr[0, 0] = 0
 
           # CLAWING UP
@@ -88,17 +105,19 @@ with mp_hands.Hands(
             low = lms.y*h
           elif ((id == 0)):
             high = lms.y*h
+          # config_cycle
           if ((ctr < CONFIG_CYCLE) and (low != 0) and (high !=0)):
             if (dist == 0): 
               dist = (high - low)/2
             else:
               dist = (dist + (high - low)/2)/2 
             ctr += 1
+          # claw check
           elif (ctr >= CONFIG_CYCLE):
-            if (((high - low) < dist) and (arr[1, 0] == 0)):
-              arr[1, 0] = 1
-            if (((high - low) > dist) and (arr[1, 0] == 1)):
-              arr[1, 0] = 0
+            if (((high - low) < dist) and (arr[0, 1] == 0)):
+              arr[0, 1] = 1
+            if (((high - low) > dist) and (arr[0, 1] == 1)):
+              arr[0, 1] = 0
 
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       i += 1
@@ -115,3 +134,5 @@ with mp_hands.Hands(
       break
 
 cap.release()
+
+# Jointly created by a Bangladeshi Immigrant and his kid.
