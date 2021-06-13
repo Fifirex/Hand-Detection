@@ -4,21 +4,26 @@ import time
 import numpy as np
 
 mp_drawing = mp.solutions.drawing_utils
-mp_hands = mp.solutions.hands
+mp_hands = mp.solutions.hands   
 
-sourcefile = open('Landmarks.txt', 'w')       #### Printing landmark locations to ext file ####
-
-## Execuation time counter ##
+# Execuation time counter 
 starttime = time.time()
 
-## FPS counter
+# FPS counter
 last_frame_time, current_frame_time = 0, 0
 
-# iteration number
+# Master counter
 i = 1      
 
 # Main np array layout ([left_check, right_check], [closed_check, NULL])
 arr = np.array([[0, 0], [0, 0]]) 
+
+# Config Distance
+dist = 0
+ctr = 0
+CONFIG_CYCLE = 50
+low = 0
+high = 0
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
@@ -32,9 +37,11 @@ with mp_hands.Hands(
     # init for size of the frame
     h, w, r = image.shape
 
-    # array debug
+    # DEBUG
     print (arr)
     # print (3*w//5)
+    # print (ctr)
+    # print (dist)
 
     if not success:
       print("Ignoring empty camera frame.")
@@ -64,6 +71,8 @@ with mp_hands.Hands(
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
         for id, lms in enumerate(hand_landmarks.landmark):
+
+          # LATERAL MOVEMENT
           if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 1] == 0)):
             arr[0, 0] = 0
             arr[0, 1] = 1
@@ -73,8 +82,23 @@ with mp_hands.Hands(
           elif ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5)):
             arr[0, 1] = 0
             arr[0, 0] = 0
-          # if(id==4 or id==20):
-          #   sourcefile.write(f"\n{i}:\n{id}:\n{lms.x*w}\n\n")
+
+          # CLAWING UP
+          if ((id == 12)):
+            low = lms.y*h
+          elif ((id == 0)):
+            high = lms.y*h
+          if ((ctr < CONFIG_CYCLE) and (low != 0) and (high !=0)):
+            if (dist == 0): 
+              dist = (high - low)/2
+            else:
+              dist = (dist + (high - low)/2)/2 
+            ctr += 1
+          elif (ctr >= CONFIG_CYCLE):
+            if (((high - low) < dist) and (arr[1, 0] == 0)):
+              arr[1, 0] = 1
+            if (((high - low) > dist) and (arr[1, 0] == 1)):
+              arr[1, 0] = 0
 
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       i += 1
@@ -90,5 +114,4 @@ with mp_hands.Hands(
     if cv2.waitKey(2) & 0xFF == 27:
       break
 
-sourcefile.close()
 cap.release()
