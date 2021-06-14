@@ -49,6 +49,11 @@ with mp_hands.Hands(
     print (arr)
     # print (orient)
     # print (high2 - low2)
+    print("SWITCH : ")
+    if (arr[1, 1] == 1):
+      print("ON")
+    else:
+      print("OFF")
     print("TRANSLATION : ")
     if (arr[0, 0] == 1):
       print("FWD")
@@ -105,6 +110,10 @@ with mp_hands.Hands(
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
         for id, lms in enumerate(hand_landmarks.landmark):
+
+          # MAIN_SWITCH
+          if ((orient!=2) and np.all(arr == 0)):
+            arr[1, 1] = 1
 
           # TRANSLATION
           # right
