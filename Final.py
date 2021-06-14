@@ -19,8 +19,11 @@ i = 1
 # Lateral_state: right (1), centre (0), left (-1)
 arr = np.array([[0, 0], [0, 0]]) 
 
-# Config Distance
+# GLOBALS
 CONFIG_CYCLE = 50
+ORIENT_CAP = 69
+
+# tools
 dist = 0
 ctr = 0
 low = 0
@@ -34,7 +37,7 @@ cap = cv2.VideoCapture(0)
 with mp_hands.Hands(
     min_detection_confidence = 0.5,
     max_num_hands = 1,
-    min_tracking_confidence = 0.6) as hands:
+    min_tracking_confidence = 0.5) as hands:
   
   while cap.isOpened():
     success, image = cap.read()
@@ -46,21 +49,30 @@ with mp_hands.Hands(
     print (arr)
     # print (orient)
     # print (high2 - low2)
-    # print("POSITION : ")
-    # if ( arr[0,0] == 1 ):
-    #   print("RIGHT")
-    # elif ( arr[0,0]== -1 ):
-    #   print("LEFT")
-    # elif ( arr[0,0] == 0 ):
-    #   print("CENTRE")
-    # print("CLAWED : ")
-    # if ( ctr >= CONFIG_CYCLE ):
-    #   if ( arr[0,1] == 1):
-    #     print("YES")
-    #   else:
-    #     print("NO")
-    # else:
-    #   print("IN CONFIG")
+    print("TRANSLATION : ")
+    if (arr[0, 0] == 1):
+      print("FWD")
+    elif (arr[0, 0] == -1):
+      print("BWD")
+    elif (arr[0, 0] == 0):
+      print("STOP")
+    print("CLAWED : ")
+    if (ctr >= CONFIG_CYCLE):
+      if (arr[0, 1] == 1):
+        print("YES")
+      else:
+        print("NO")
+    else:
+      print("IN CONFIG")
+    print("ORIENT : ")
+    if (orient == 2):
+      print("IN CONFIG")
+    elif (arr[1, 0] == 0):
+      print("NO_ROT")
+    elif (arr[1, 0] == 1):
+      print("ROT_L")
+    else:
+      print("ROT_R")
     # print (3*w//5)
     # print (ctr)
     # print (dist)
@@ -112,9 +124,9 @@ with mp_hands.Hands(
             high2 = lms.x*w
           # hand orientation config
           if (high2!=0 and low2!=0):
-            if (high2 - low2 > 69):
+            if (high2 - low2 > ORIENT_CAP):
               orient = 1
-            elif (high2 - low2 < -69):
+            elif (high2 - low2 < -1*ORIENT_CAP):
               orient = -1
             else:
               orient = 0
