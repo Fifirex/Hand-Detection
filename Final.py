@@ -49,19 +49,19 @@ with mp_hands.Hands(
     print (arr)
     # print (orient)
     # print (high2 - low2)
-    print("SWITCH : ")
+    print("SWITCH :", end="", flush=True)
     if (arr[1, 1] == 1):
       print("ON")
     else:
       print("OFF")
-    print("TRANSLATION : ")
+    print("TRANSL :", end="", flush=True)
     if (arr[0, 0] == 1):
       print("FWD")
     elif (arr[0, 0] == -1):
       print("BWD")
     elif (arr[0, 0] == 0):
       print("STOP")
-    print("CLAWED : ")
+    print("CLAWED :", end="", flush=True)
     if (ctr >= CONFIG_CYCLE):
       if (arr[0, 1] == 1):
         print("YES")
@@ -69,7 +69,7 @@ with mp_hands.Hands(
         print("NO")
     else:
       print("IN CONFIG")
-    print("ORIENT : ")
+    print("ORIENT :", end="", flush=True)
     if (orient == 2):
       print("IN CONFIG")
     elif (arr[1, 0] == 0):
@@ -116,15 +116,18 @@ with mp_hands.Hands(
             arr[1, 1] = 1
 
           # TRANSLATION
-          # right
-          if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
-            arr[0, 0] = 1
-          # left
-          elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
-            arr[0, 0] = -1
-          # centre
-          elif ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0, 0] != 0)):
+          if ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0, 0] != 0)):
             arr[0, 0] = 0
+          elif ((orient == 0) or (orient == 1)):
+            if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
+              arr[0, 0] = 1
+            elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
+              arr[0, 0] = -1
+          elif (orient == -1):
+            if ((id == 20) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
+              arr[0, 0] = 1
+            elif ((id == 4) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
+              arr[0, 0] = -1
           
           # ROTATION
           if (id == 4):
