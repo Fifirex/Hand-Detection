@@ -20,8 +20,9 @@ i = 1
 arr = np.array([[0, 0], [0, 0]]) 
 
 # GLOBALS
-CONFIG_CYCLE = 50
-ORIENT_CAP = 69
+CONFIG_CYCLE = 50   #def = 50
+ORIENT_CAP = 69     #def = 69
+STRENGTH = 2        #def = 2
 
 # tools
 dist = 0
@@ -112,8 +113,10 @@ with mp_hands.Hands(
         for id, lms in enumerate(hand_landmarks.landmark):
 
           # MAIN_SWITCH
-          if ((orient!=2) and np.all(arr == 0)):
-            arr[1, 1] = 1
+          if ((ctr >= CONFIG_CYCLE) and np.all(arr == 0)):
+            ctr += 1
+            if (ctr >= STRENGTH*CONFIG_CYCLE):
+              arr[1, 1] = 1
 
           # TRANSLATION
           if ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0, 0] != 0)):
