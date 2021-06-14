@@ -25,6 +25,9 @@ dist = 0
 ctr = 0
 low = 0
 high = 0
+low2 = 0
+high2 = 0
+orient = 2
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
@@ -41,21 +44,23 @@ with mp_hands.Hands(
 
     # DEBUG
     print (arr)
-    print("POSITION : ")
-    if ( arr[0,0] == 1 ):
-      print("RIGHT")
-    elif ( arr[0,0]== -1 ):
-      print("LEFT")
-    elif ( arr[0,0] == 0 ):
-      print("CENTRE")
-    print("CLAWED : ")
-    if ( ctr >= CONFIG_CYCLE ):
-      if ( arr[0,1] == 1):
-        print("YES")
-      else:
-        print("NO")
-    else:
-      print("IN CONFIG")
+    # print (orient)
+    # print (high2 - low2)
+    # print("POSITION : ")
+    # if ( arr[0,0] == 1 ):
+    #   print("RIGHT")
+    # elif ( arr[0,0]== -1 ):
+    #   print("LEFT")
+    # elif ( arr[0,0] == 0 ):
+    #   print("CENTRE")
+    # print("CLAWED : ")
+    # if ( ctr >= CONFIG_CYCLE ):
+    #   if ( arr[0,1] == 1):
+    #     print("YES")
+    #   else:
+    #     print("NO")
+    # else:
+    #   print("IN CONFIG")
     # print (3*w//5)
     # print (ctr)
     # print (dist)
@@ -89,21 +94,42 @@ with mp_hands.Hands(
       for hand_landmarks in results.multi_hand_landmarks:
         for id, lms in enumerate(hand_landmarks.landmark):
 
-          # LATERAL MOVEMENT
+          # TRANSLATION
           # right
           if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
             arr[0, 0] = 1
-          #left
+          # left
           elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
             arr[0, 0] = -1
-          #centre
+          # centre
           elif ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0, 0] != 0)):
             arr[0, 0] = 0
+          
+          # ROTATION
+          if (id == 4):
+            low2 = lms.x*w
+          elif (id == 20):
+            high2 = lms.x*w
+          # hand orientation config
+          if (high2!=0 and low2!=0):
+            if (high2 - low2 > 69):
+              orient = 1
+            elif (high2 - low2 < -69):
+              orient = -1
+            else:
+              orient = 0
+            high2 = 0
+            low2 = 0
+          # info_transmission
+          if (arr[0, 0]!=0):
+            arr[1, 0] = 0
+          else:
+            arr[1, 0] = orient
 
-          # CLAWING UP
-          if ((id == 12)):
+          # CLAWING 
+          if (id == 12):
             low = lms.y*h
-          elif ((id == 0)):
+          elif (id == 0):
             high = lms.y*h
           # config_cycle
           if ((ctr < CONFIG_CYCLE) and (low != 0) and (high !=0)):
@@ -112,7 +138,7 @@ with mp_hands.Hands(
             else:
               dist = (dist + (high - low)/2)/2 
             ctr += 1
-          # claw check
+          # claw_check
           elif (ctr >= CONFIG_CYCLE):
             if (((high - low) < dist) and (arr[0, 1] == 0)):
               arr[0, 1] = 1
