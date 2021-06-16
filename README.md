@@ -42,7 +42,7 @@ pip install opencv-python
 pip install mediapipe
 ```
 
-Replace `pip` by `pip3` if you are having both installed on your system.
+Replace `pip` by `pip3` if you have both installed on your system.
 
 ## The Team
 This project is created for the DIY Assignment this semester, and this is our team:
