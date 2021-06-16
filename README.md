@@ -47,10 +47,10 @@ Replace `pip` by `pip3` if you are having both installed on your system.
 ## The Team
 This project is created for the DIY Assignment this semester, and this is our team:
 
-###Software
+### Software
 @Fifirex
 @Aeroscythe
 
-###Hardware/Embed
+### Hardware/Embed
 @Viswesh-N
 @SM200602
