@@ -48,9 +48,11 @@ Replace `pip` by `pip3` if you are having both installed on your system.
 This project is created for the DIY Assignment this semester, and this is our team:
 
 **Software**
+
 @Fifirex
 @Aeroscythe
 
 **Hardware/Embed**
+
 @Viswesh-N
 @SM200602
