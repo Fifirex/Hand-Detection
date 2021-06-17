@@ -1,6 +1,5 @@
 import cv2
 import mediapipe as mp
-import time
 import numpy as np
 
 mp_drawing = mp.solutions.drawing_utils
@@ -10,7 +9,7 @@ mp_hands = mp.solutions.hands
 # last_frame_time, current_frame_time = 0, 0
 
 # Master counter
-i = 1      
+i = 1
 
 # Main np array layout ([lateral_state, NULL], [closed_check, NULL])
 # Lateral_state: right (1), centre (0), left (-1)
@@ -18,7 +17,7 @@ arr = [[0, 0], [0, 0]]
 
 # GLOBALS
 CONFIG_CYCLE = 50   #def = 50
-ORIENT_CAP = 150    #def = 150
+ORIENT_CAP = 150    #def = 150 (have to make it around 3/5 of a variable extreme)
 STRENGTH = 2        #def = 2
 
 # tools
@@ -29,6 +28,7 @@ high = 0
 low2 = 0
 high2 = 0
 orient = 2
+switch = 0  # First switch release flag
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
@@ -108,8 +108,13 @@ with mp_hands.Hands(
           # MAIN_SWITCH
           if ((ctr >= CONFIG_CYCLE) and (arr[0][0] == 0) and (arr[0][1] == 0) and (arr[1][0] == 0) and (arr[1][1] == 0)):
             ctr += 1
-            if (ctr >= STRENGTH*CONFIG_CYCLE):
+            if ((ctr >= STRENGTH*CONFIG_CYCLE) and (switch == 0)):
               arr[1][1] = 1
+              switch = 1
+          
+          # HANDS_BACK
+          if(switch == 1):
+            arr[1][1] = 1
 
           # TRANSLATION
           if ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0][0] != 0)):
@@ -167,6 +172,10 @@ with mp_hands.Hands(
 
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       i += 1
+
+    # HANDS AWAY
+    else:
+      arr[1][1] = 0
             
     # cv2.putText(image, fps, (20, 120), font, 3, (10, 155, 0), 3, cv2.LINE_AA)    ## FPS counter
     cv2.line(image, (2 * w // 5, 0), (2 * w // 5, h), (0,0,0), 5)
