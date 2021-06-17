@@ -18,7 +18,7 @@ arr = [[0, 0], [0, 0]]
 
 # GLOBALS
 CONFIG_CYCLE = 50   #def = 50
-ORIENT_CAP = 69     #def = 69
+ORIENT_CAP = 150    #def = 150
 STRENGTH = 2        #def = 2
 
 # tools
@@ -45,6 +45,7 @@ with mp_hands.Hands(
 
     # DEBUG
     print (arr)
+    # print (high2 - low2)
     # print("SWITCH :", end="", flush=True)
     # if (arr[1][1] == 1):
     #   print("ON")
@@ -127,7 +128,7 @@ with mp_hands.Hands(
           # ROTATION
           if (id == 4):
             low2 = lms.x*w
-          elif (id == 20):
+          elif (id == 18):
             high2 = lms.x*w
           # hand orientation config
           if (high2!=0 and low2!=0):
