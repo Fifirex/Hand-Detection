@@ -19,7 +19,7 @@ A = [TRNSL, CLAWED]
 
 * `CLAWED` is the value that tells the crane of the bot to relese or pick up objects. It is denoted by `[0, 1]` for `[NOT_CLAWED, CLAWED]`. This is detected by the relative position of the middle finger tip to the palm.
 
-* `ROTAT` is the value that tells the rotation state for the bot. It is denoted the by `[-1, 0, 1]` for `[ROT_L, NO_ROT, ROT_R]`. This is detected by the orientation of the hand on the screen, the bot rotates in the direction the thumb is pointing to.
+* `ROTAT` is the value that tells the rotation state for the bot. It is denoted the by `[-1, 0, 1]` for `[ROT_R, NO_ROT, ROT_L]`. This is detected by the orientation of the hand on the screen, the bot rotates in the direction the thumb is pointing to.
 
 * `SWITCH` is the value that tells the current state of the bot. It is denoted the by `[0, 1]` for `[OFF, ON]`. The bot is turned `ON` when it detectes  states `NO_ROT` and `STOP` for the first time.
 
