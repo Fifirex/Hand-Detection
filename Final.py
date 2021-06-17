@@ -6,11 +6,8 @@ import numpy as np
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands   
 
-# Execuation time counter 
-starttime = time.time()
-
 # FPS counter
-last_frame_time, current_frame_time = 0, 0
+# last_frame_time, current_frame_time = 0, 0
 
 # Master counter
 i = 1      
@@ -48,41 +45,35 @@ with mp_hands.Hands(
 
     # DEBUG
     print (arr)
-    # list = arr.tolist()
-    # print (orient)
-    # print (high2 - low2)
-    print("SWITCH :", end="", flush=True)
-    if (arr[1][1] == 1):
-      print("ON")
-    else:
-      print("OFF")
-    print("TRANSL :", end="", flush=True)
-    if (arr[0][0] == 1):
-      print("FWD")
-    elif (arr[0][0] == -1):
-      print("BWD")
-    elif (arr[0][0] == 0):
-      print("STOP")
-    print("CLAWED :", end="", flush=True)
-    if (ctr >= CONFIG_CYCLE):
-      if (arr[0][1] == 1):
-        print("YES")
-      else:
-        print("NO")
-    else:
-      print("IN CONFIG")
-    print("ORIENT :", end="", flush=True)
-    if (orient == 2):
-      print("IN CONFIG")
-    elif (arr[1][0] == 0):
-      print("NO_ROT")
-    elif (arr[1][0] == 1):
-      print("ROT_L")
-    else:
-      print("ROT_R")
-    # print (3*w//5)
-    # print (ctr)
-    # print (dist)
+    # print("SWITCH :", end="", flush=True)
+    # if (arr[1][1] == 1):
+    #   print("ON")
+    # else:
+    #   print("OFF")
+    # print("TRANSL :", end="", flush=True)
+    # if (arr[0][0] == 1):
+    #   print("FWD")
+    # elif (arr[0][0] == -1):
+    #   print("BWD")
+    # elif (arr[0][0] == 0):
+    #   print("STOP")
+    # print("CLAWED :", end="", flush=True)
+    # if (ctr >= CONFIG_CYCLE):
+    #   if (arr[0][1] == 1):
+    #     print("YES")
+    #   else:
+    #     print("NO")
+    # else:
+    #   print("IN CONFIG")
+    # print("ORIENT :", end="", flush=True)
+    # if (orient == 2):
+    #   print("IN CONFIG")
+    # elif (arr[1][0] == 0):
+    #   print("NO_ROT")
+    # elif (arr[1][0] == 1):
+    #   print("ROT_L")
+    # else:
+    #   print("ROT_R")
 
     if not success:
       print("Ignoring empty camera frame.")
@@ -90,11 +81,11 @@ with mp_hands.Hands(
       continue
 
     ##FPS counter
-    current_frame_time = time.time()
-    fps = 1/(current_frame_time - last_frame_time)
-    last_frame_time = current_frame_time
-    fps = str(int(fps))
-    font = cv2.FONT_HERSHEY_COMPLEX
+    # current_frame_time = time.time()
+    # fps = 1/(current_frame_time - last_frame_time)
+    # last_frame_time = current_frame_time
+    # fps = str(int(fps))
+    # font = cv2.FONT_HERSHEY_COMPLEX
 
     # Flip the image horizontally for a later selfie-view display
     # and convert the BGR image to RGB.
@@ -176,13 +167,10 @@ with mp_hands.Hands(
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       i += 1
             
-    cv2.putText(image, fps, (20, 120), font, 3, (10, 155, 0), 3, cv2.LINE_AA)    ## FPS counter
+    # cv2.putText(image, fps, (20, 120), font, 3, (10, 155, 0), 3, cv2.LINE_AA)    ## FPS counter
     cv2.line(image, (2 * w // 5, 0), (2 * w // 5, h), (0,0,0), 5)
     cv2.line(image, (3 * w // 5, 0), (3 * w // 5, h), (0,0,0), 5)
     cv2.imshow('Hands', image)
-    
-    endtime = time.time()     ## runtime counter ##
-    # print(endtime-starttime)
 
     if cv2.waitKey(2) & 0xFF == 27:
       break
