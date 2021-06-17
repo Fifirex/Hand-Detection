@@ -17,7 +17,7 @@ i = 1
 
 # Main np array layout ([lateral_state, NULL], [closed_check, NULL])
 # Lateral_state: right (1), centre (0), left (-1)
-arr = np.array([[0, 0], [0, 0]]) 
+arr = [[0, 0], [0, 0]]
 
 # GLOBALS
 CONFIG_CYCLE = 50   #def = 50
@@ -48,23 +48,24 @@ with mp_hands.Hands(
 
     # DEBUG
     print (arr)
+    # list = arr.tolist()
     # print (orient)
     # print (high2 - low2)
     print("SWITCH :", end="", flush=True)
-    if (arr[1, 1] == 1):
+    if (arr[1][1] == 1):
       print("ON")
     else:
       print("OFF")
     print("TRANSL :", end="", flush=True)
-    if (arr[0, 0] == 1):
+    if (arr[0][0] == 1):
       print("FWD")
-    elif (arr[0, 0] == -1):
+    elif (arr[0][0] == -1):
       print("BWD")
-    elif (arr[0, 0] == 0):
+    elif (arr[0][0] == 0):
       print("STOP")
     print("CLAWED :", end="", flush=True)
     if (ctr >= CONFIG_CYCLE):
-      if (arr[0, 1] == 1):
+      if (arr[0][1] == 1):
         print("YES")
       else:
         print("NO")
@@ -73,9 +74,9 @@ with mp_hands.Hands(
     print("ORIENT :", end="", flush=True)
     if (orient == 2):
       print("IN CONFIG")
-    elif (arr[1, 0] == 0):
+    elif (arr[1][0] == 0):
       print("NO_ROT")
-    elif (arr[1, 0] == 1):
+    elif (arr[1][0] == 1):
       print("ROT_L")
     else:
       print("ROT_R")
@@ -113,24 +114,24 @@ with mp_hands.Hands(
         for id, lms in enumerate(hand_landmarks.landmark):
 
           # MAIN_SWITCH
-          if ((ctr >= CONFIG_CYCLE) and np.all(arr == 0)):
+          if ((ctr >= CONFIG_CYCLE) and (arr[0][0] == 0) and (arr[0][1] == 0) and (arr[1][0] == 0) and (arr[1][1] == 0)):
             ctr += 1
             if (ctr >= STRENGTH*CONFIG_CYCLE):
-              arr[1, 1] = 1
+              arr[1][1] = 1
 
           # TRANSLATION
-          if ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0, 0] != 0)):
-            arr[0, 0] = 0
+          if ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0][0] != 0)):
+            arr[0][0] = 0
           elif ((orient == 0) or (orient == 1)):
-            if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
-              arr[0, 0] = 1
-            elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
-              arr[0, 0] = -1
+            if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0][0] != 1)):
+              arr[0][0] = 1
+            elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0][0] != -1)):
+              arr[0][0] = -1
           elif (orient == -1):
-            if ((id == 20) and (lms.x*w > 3*w//5) and (arr[0, 0] != 1)):
-              arr[0, 0] = 1
-            elif ((id == 4) and (lms.x*w < 2*w//5) and (arr[0, 0] != -1)):
-              arr[0, 0] = -1
+            if ((id == 20) and (lms.x*w > 3*w//5) and (arr[0][0] != 1)):
+              arr[0][0] = 1
+            elif ((id == 4) and (lms.x*w < 2*w//5) and (arr[0][0] != -1)):
+              arr[0][0] = -1
           
           # ROTATION
           if (id == 4):
@@ -148,10 +149,10 @@ with mp_hands.Hands(
             high2 = 0
             low2 = 0
           # info_transmission
-          if (arr[0, 0]!=0):
-            arr[1, 0] = 0
+          if (arr[0][0]!=0):
+            arr[1][0] = 0
           else:
-            arr[1, 0] = orient
+            arr[1][0] = orient
 
           # CLAWING 
           if (id == 12):
@@ -167,10 +168,10 @@ with mp_hands.Hands(
             ctr += 1
           # claw_check
           elif (ctr >= CONFIG_CYCLE):
-            if (((high - low) < dist) and (arr[0, 1] == 0)):
-              arr[0, 1] = 1
-            if (((high - low) > dist) and (arr[0, 1] == 1)):
-              arr[0, 1] = 0
+            if (((high - low) < dist) and (arr[0][1] == 0)):
+              arr[0][1] = 1
+            if (((high - low) > dist) and (arr[0][1] == 1)):
+              arr[0][1] = 0
 
         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       i += 1
