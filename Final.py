@@ -1,6 +1,5 @@
 import cv2
 import mediapipe as mp
-import numpy as np
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands   
@@ -175,6 +174,9 @@ with mp_hands.Hands(
 
     # HANDS AWAY
     else:
+      arr[0][0] = 0
+      arr[1][0] = 0
+      arr[0][1] = 0
       arr[1][1] = 0
             
     # cv2.putText(image, fps, (20, 120), font, 3, (10, 155, 0), 3, cv2.LINE_AA)    ## FPS counter
