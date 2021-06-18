@@ -10,6 +10,11 @@ mp_hands = mp.solutions.hands
 # FPS counter
 # last_frame_time, current_frame_time = 0, 0
 
+# ROS init
+rospy.init_node('talker',anonymous=True)
+pub = rospy.Publisher('TopicArr', Int16MultiArray, queue_size=10)
+rate = rospy.Rate(10)
+
 # Master counter
 i = 1
 
@@ -39,7 +44,7 @@ with mp_hands.Hands(
     max_num_hands = 1,
     min_tracking_confidence = 0.5) as hands:
   
-  while cap.isOpened():
+  while (cap.isOpened() and (not rospy.is_shutdown())):
     success, image = cap.read()
 
     # init for size of the frame
@@ -77,6 +82,14 @@ with mp_hands.Hands(
     #   print("ROT_L")
     # else:
     #   print("ROT_R")
+
+    # TALKER code
+    print("Loop Running")
+		Md = Int16MultiArray()
+		x = [arr[0][0], arr[1][0], arr[0][1], arr[1][1]]
+		Md.data = x
+		pub.publish(Md)
+	  rate.sleep()
 
     if not success:
       print("Ignoring empty camera frame.")
@@ -190,20 +203,6 @@ with mp_hands.Hands(
     if cv2.waitKey(2) & 0xFF == 27:
       break
 
+  rospy.spin() 
+
 cap.release()
-
-def talker():
-	pub = rospy.Publisher('TopicArr', Int16MultiArray, queue_size=10)
-	rate = rospy.Rate(10)
-	while not rospy.is_shutdown():
-		print("Loop Running")
-		Md = Int16MultiArray()
-		x = [arr[0][0], arr[1][0], arr[0][1], arr[1][1]]
-		Md.data = x
-		pub.publish(Md)
-		rate.sleep()
-	rospy.spin() 
-
-if _name_ == '_main_':
-	rospy.init_node('talker',anonymous=True)
-	talker()
