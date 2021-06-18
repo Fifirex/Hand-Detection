@@ -8,9 +8,6 @@ def talker():
   mp_drawing = mp.solutions.drawing_utils
   mp_hands = mp.solutions.hands
 
-  # FPS counter
-  # last_frame_time, current_frame_time = 0, 0
-
   # Master counter
   i = 1
 
@@ -31,6 +28,8 @@ def talker():
   high2 = 0
   orient = 2
   switch = 0
+  claw = 0
+  flag = 0
 
   # ROS_init
   pub = rospy.Publisher('TopicArr', Int16MultiArray, queue_size=10)
@@ -146,16 +145,26 @@ def talker():
             # config_cycle
             if ((ctr < CONFIG_CYCLE) and (low != 0) and (high !=0)):
               if (dist == 0): 
-                dist = (high - low)/2
+                dist = (high - low)/3
               else:
-                dist = (dist + (high - low)/2)/2 
+                dist = (dist + (high - low)/3)/2 
               ctr += 1
             # claw_check
             elif (ctr >= CONFIG_CYCLE):
-              if (((high - low) < dist) and (arr[0][1] == 0)):
-                arr[0][1] = 1
-              if (((high - low) > dist) and (arr[0][1] == 1)):
+              if (((high - low) < dist) and (claw == 0)):
+                claw = 1
+              if (((high - low) > dist) and (claw == 1)):
+                claw = 0
+            # info_transmission
+            if (claw == 0):
+              flag = 1
+            elif (flag == 1):
+              if (arr[0][1] == 1):
                 arr[0][1] = 0
+                flag = 0
+              else:
+                arr[0][1] = 1
+                flag = 0
 
           mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
         i += 1
