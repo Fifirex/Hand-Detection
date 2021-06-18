@@ -19,11 +19,7 @@ def talker():
 
   # GLOBALS
   CONFIG_CYCLE = 50 #def = 50
-  ORIENT_CAP = 150  #def = 150
   STRENGTH = 2	    #def = 2
-
-  # FPS counter
-  # last_frame_time, current_frame_time = 0, 0
 
   # tools
   dist = 0
@@ -31,6 +27,7 @@ def talker():
   low = 0
   high = 0
   low2 = 0
+  mid2 = 0
   high2 = 0
   orient = 2
   switch = 0
@@ -53,7 +50,7 @@ def talker():
       # init for size of the frame
       h, w, r = image.shape
 
-      # DEBUG
+      # DEBUG BLOCK
       print (arr)
 
       if rospy.is_shutdown():
@@ -70,13 +67,6 @@ def talker():
         print("Ignoring empty camera frame.")
         # If loading a video, use 'break' instead of 'continue'.
         continue
-
-      ##FPS counter
-      # current_frame_time = time.time()
-      # fps = 1/(current_frame_time - last_frame_time)
-      # last_frame_time = current_frame_time
-      # fps = str(int(fps))
-      # font = cv2.FONT_HERSHEY_COMPLEX
 
       # Flip the image horizontally for a later selfie-view display
       # and convert the BGR image to RGB.
@@ -110,31 +100,38 @@ def talker():
             if ((id == 9) and (lms.x*w < 3*w//5) and (lms.x*w > 2*w//5) and (arr[0][0] != 0)):
               arr[0][0] = 0
             elif ((orient == 0) or (orient == 1)):
-              if ((id == 4) and (lms.x*w > 3*w//5) and (arr[0][0] != 1)):
+              if ((id == 2) and (lms.x*w > 3*w//5) and (arr[0][0] != 1)):
                 arr[0][0] = 1
               elif ((id == 20) and (lms.x*w < 2*w//5) and (arr[0][0] != -1)):
                 arr[0][0] = -1
             elif (orient == -1):
               if ((id == 20) and (lms.x*w > 3*w//5) and (arr[0][0] != 1)):
                 arr[0][0] = 1
-              elif ((id == 4) and (lms.x*w < 2*w//5) and (arr[0][0] != -1)):
+              elif ((id == 2) and (lms.x*w < 2*w//5) and (arr[0][0] != -1)):
                 arr[0][0] = -1
 
             # ROTATION
             if (id == 4):
               low2 = lms.x*w
-            elif (id == 20):
-              high2 = lms.x*w
+            elif (id == 5):
+              mid2 = lms.x*w
+            elif (id == 9):
+              high2 = lms.x*w          
             # hand orientation config
-            if (high2!=0 and low2!=0):
-              if (high2 - low2 > ORIENT_CAP):
-                orient = 1
-              elif (high2 - low2 < -1*ORIENT_CAP):
-                orient = -1
+            if (high2!=0 and low2!=0 and mid2!=0):
+              if (mid2 < high2):
+                if (low2 < mid2):
+                  orient = 1
+                else:
+                  orient = 0
               else:
-                orient = 0
+                if (low2 > mid2):
+                  orient = -1
+                else:
+                  orient = 0
               high2 = 0
               low2 = 0
+              mid2 = 0
             # info_transmission
             if (arr[0][0]!=0):
               arr[1][0] = 0
