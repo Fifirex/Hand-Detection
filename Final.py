@@ -12,7 +12,7 @@ def talker():
   # last_frame_time, current_frame_time = 0, 0
 
   # Master counter
-  i=1 
+  i = 1
 
   # Passing Array
   arr = [[0,0],[0,0]]
@@ -169,6 +169,7 @@ def talker():
         arr[1][0] = 0
         arr[0][1] = 0
         arr[1][1] = 0
+        ctr = 0     # resets config_cycle
 
       #cv2.putText(image, fps, (20, 120), font, 3, (10, 155, 0), 3, cv2.LINE_AA)    ## FPS counter
       cv2.line(image, (2 * w // 5, 0), (2 * w // 5, h), (0,0,0), 5)
