@@ -85,11 +85,11 @@ with mp_hands.Hands(
 
     # TALKER code
     print("Loop Running")
-		Md = Int16MultiArray()
-		x = [arr[0][0], arr[1][0], arr[0][1], arr[1][1]]
-		Md.data = x
-		pub.publish(Md)
-	  rate.sleep()
+    Md = Int16MultiArray()
+    x = [arr[0][0], arr[1][0], arr[0][1], arr[1][1]]
+    Md.data = x
+    pub.publish(Md)
+    rate.sleep()
 
     if not success:
       print("Ignoring empty camera frame.")
