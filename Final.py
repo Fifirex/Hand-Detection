@@ -1,5 +1,8 @@
+#! /usr/bin/python3
 import cv2
 import mediapipe as mp
+import rospy
+from std_msgs.msg import Int16MultiArray
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands   
@@ -189,4 +192,18 @@ with mp_hands.Hands(
 
 cap.release()
 
-# Jointly created by a Bangladeshi Immigrant and his kid.
+def talker():
+	pub = rospy.Publisher('TopicArr', Int16MultiArray, queue_size=10)
+	rate = rospy.Rate(10)
+	while not rospy.is_shutdown():
+		print("Loop Running")
+		Md = Int16MultiArray()
+		x = [arr[0][0], arr[1][0], arr[0][1], arr[1][1]]
+		Md.data = x
+		pub.publish(Md)
+		rate.sleep()
+	rospy.spin() 
+
+if _name_ == '_main_':
+	rospy.init_node('talker',anonymous=True)
+	talker()
