@@ -27,23 +27,6 @@ void Motordriver( const std_msgs::Int16MultiArray &Md)
   c2=Md.data[2];
   c4=Md.data[3];
 
-  /*if(c1 == 0 && c3 == 0 && c4 == 1)
-    {
-    digitalWrite(Input2,HIGH);
-    digitalWrite(Input1,HIGH);
-    digitalWrite(Input3,HIGH);
-    digitalWrite(Input4,HIGH); 
-    if(c2 == 0)
-    {
-      Myservo.write(pos);
-      pos++;
-    }
-    else
-    {
-      Myservo.write(pos);
-      pos--;
-    }
-    } */ 
   if(c4==1)
   {
     if(c1 == 0)
@@ -72,12 +55,12 @@ void Motordriver( const std_msgs::Int16MultiArray &Md)
           if(c2 == 1)
           {
             Myservo.write(pos);
-            pos++;
+            pos+=5;
           }
           else
           {
            Myservo.write(pos);
-           pos--;
+           pos-=5;
           }
           
       }
@@ -97,23 +80,7 @@ void Motordriver( const std_msgs::Int16MultiArray &Md)
       digitalWrite(Input3,LOW);
       digitalWrite(Input4,HIGH);  
     }
-  /*if(c3!=0)
-    {
-      if (c3 == 1)
-        {
-          digitalWrite(Input2,HIGH);
-          digitalWrite(Input1,LOW);
-          digitalWrite(Input3,LOW);
-          digitalWrite(Input4,HIGH);  
-        }
-       else if (c3 == -1)
-        {
-          digitalWrite(Input2,LOW);
-          digitalWrite(Input1,HIGH);
-          digitalWrite(Input3,HIGH);
-          digitalWrite(Input4,LOW);  
-        }
-    }*/
+  
    
   }
 }
