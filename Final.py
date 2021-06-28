@@ -17,6 +17,7 @@ def talker():
   # GLOBALS
   CONFIG_CYCLE = 50 #def = 50
   STRENGTH = 2	    #def = 2
+  CLAW_CAP = 2      #def = 2
 
   # tools
   dist = 0
@@ -145,9 +146,9 @@ def talker():
             # config_cycle
             if ((ctr < CONFIG_CYCLE) and (low != 0) and (high !=0)):
               if (dist == 0): 
-                dist = (high - low)/3
+                dist = (high - low)/(CLAW_CAP)
               else:
-                dist = (dist + (high - low)/3)/2 
+                dist = (dist + (high - low)/(CLAW_CAP))/2 
               ctr += 1
             # claw_check
             elif (ctr >= CONFIG_CYCLE):
